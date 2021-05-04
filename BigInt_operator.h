@@ -1,2 +1,3 @@
 /*operator: +, -, *, /, >>, <<, %, ^, |, ^, ~*/
 
+BI operator~(BI);

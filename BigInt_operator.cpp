@@ -32,3 +32,12 @@ BI addOperator(BI term1, BI term2) {
 	BI res = { n,tempData };
 	return res;
 }
+
+BI operator~(BI x)
+{
+	BI temp = x;
+	for (int i = 0; i < temp.nBytes; i++)
+		temp.data[i] = !temp.data[i];
+	return temp;
+}
+
