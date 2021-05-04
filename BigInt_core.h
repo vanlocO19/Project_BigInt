@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <memory.h>
-
+#include <string.h>
 using namespace std;
 
 typedef unsigned char BYTE;
