@@ -32,7 +32,29 @@ bool isPositive(BI x)
 
 BI binaryToBigInt(char *str)
 {
-	return BI();
+	int cnt = 0;
+	int pos = 0;
+	BI temp;
+	if (strlen(str) > 128) {
+		temp.nBytes = (strlen(str) / 8);
+	} else {
+		temp.nBytes = 16;
+	}
+
+	temp.data = (BYTE*)malloc(temp.nBytes * sizeof(BYTE));
+
+	memset(temp.data, 0, sizeof(temp.data));
+
+	for (int i = strlen(str) - 1; i >= 0; i--) {
+		if (cnt < 8) {
+			temp.data[pos] += (str[i] == '1') ? (1 << cnt) : 0;
+			cnt++;
+		} else {
+			cnt = 0;
+			pos++;
+		}
+	}
+	return temp;
 }
 
 BI decimalToBigInt(char *str)
