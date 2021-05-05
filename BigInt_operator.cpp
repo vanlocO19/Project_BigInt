@@ -2,7 +2,7 @@
 #include "BigInt_operator.h"
 #include "BigInt_function.h"
 #include "BigInt.h"
-
+// abc
 void assignOperator(BI src, BI& dest) {
 	freeBI(dest);
 	dest.nBytes = src.nBytes;
