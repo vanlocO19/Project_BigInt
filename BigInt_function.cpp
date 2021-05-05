@@ -27,7 +27,7 @@ BI get2Complement(BI x)
 
 bool isPositive(BI x)
 {
-	return (x.data[x.nBytes - 1] >> 7) & 1;
+	return ~(x.data[x.nBytes - 1] >> 7);
 }
 
 BI binaryToBigInt(char *str)
@@ -79,7 +79,7 @@ char * bigIntToBinary(BI x)
 int getLength(BI x)
 {
 	int len = 0;
-	for(int i = 7; i >= 0; i++)
+	for(int i = 7; i >= 0; i--)
 		if (x.data[x.nBytes - 1] & (1 << i)) {
 			len = i;
 			break;
