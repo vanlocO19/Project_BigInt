@@ -43,16 +43,16 @@ BI binaryToBigInt(char *str)
 
 	temp.data = (BYTE*)malloc(temp.nBytes * sizeof(BYTE));
 
-	memset(temp.data, 0, sizeof(temp.data));
+	for (int i = 0; i < temp.nBytes; i++)
+		temp.data[i] = 0;
 
 	for (int i = strlen(str) - 1; i >= 0; i--) {
-		if (cnt < 8) {
-			temp.data[pos] += (str[i] == '1') ? (1 << cnt) : 0;
-			cnt++;
-		} else {
+		if (cnt == 8) {
 			cnt = 0;
 			pos++;
 		}
+		temp.data[pos] += (str[i] == '1') ? (1 << cnt) : 0;
+		cnt++;
 	}
 	return temp;
 }
@@ -71,24 +71,26 @@ char * bigIntToBinary(BI x)
 {
 	char* str = nullptr;
 	int n = getLength(x);
-	str = (char*)malloc((n + 1) * sizeof(char));
+	str = (char*)malloc((x.nBytes + 1) * 8 * sizeof(char));
 	if (str == nullptr) return nullptr;
 	
-	str[n] = '\0';
+	for (int i = 0; i < x.nBytes * 8; i++)
+		str[i] = 0;
+	str[x.nBytes * 8] = '\0';
 
 	// Set first "digit"
 
-	int f_len = n - 8 * (x.nBytes - 1);
+	//int f_len = n - 8 * (x.nBytes - 1);
 	int j = 0;
-	for (int i = f_len - 1; i >= 0; i--) {
-		str[j] = (x.data[x.nBytes - 1] & (1 << i)) ? '1' : '0';
-		j++;
-	}
+	//for (int i = f_len - 1; i >= 0; i--) {
+	//	str[j] = (x.data[x.nBytes - 1] & (1 << i)) ? '1' : '0';
+	//	j++;
+	//}
 
 	// 00110010 -> f_len = 6,
 	// 00110010 & 00100000 <=> 00110010 & (1 << 5) <=> 1
 
-	for (int i = x.nBytes - 2; i >= 0; i--) {
+	for (int i = ceil(float(n)/8.f) - 1; i >= 0; i--) {
 		for (int k = 7; k >= 0; k--) {
 			str[j] = (x.data[i] & (1 << k)) ? '1' : '0';
 			j++;
@@ -101,12 +103,17 @@ char * bigIntToBinary(BI x)
 int getLength(BI x)
 {
 	int len = 0;
-	for(int i = 7; i >= 0; i--)
-		if (x.data[x.nBytes - 1] & (1 << i)) {
-			len = i;
+	int i = x.nBytes - 1;
+	while (i >= 0 && x.data[i] == 0) i--;
+
+	for(int k = 7; k >= 0; k--)
+		if (x.data[i] & (1 << k))
+		{
+			len = k + 1;
 			break;
 		}
-	len += (x.nBytes - 1) * 8;
+
+	len += i * 8;
 
 	return len;
 }
