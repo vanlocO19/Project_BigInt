@@ -10,3 +10,5 @@ BI decimalToBigInt(char*);
 char* bigIntToDecimal(BI);
 char* bigIntToBinary(BI);
 int getLength(BI);
+
+bool initBI(int, BI&);

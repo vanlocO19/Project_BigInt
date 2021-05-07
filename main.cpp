@@ -10,10 +10,16 @@ using namespace std;
 int main()
 {
 	char t[] {"100001110101"};
-	char *x = bigIntToBinary(binaryToBigInt(t));
+
+	BI temp = binaryToBigInt(t);
+
+	cout << getLength(temp) << endl;
+
+	char *x = (bigIntToBinary(abs(get2Complement(temp))));
 	cout << strlen(x) << endl;
-	for (int i = 0; i < 128; i++)
-		cout << x[i];
+	cout << x;
+
+
 	
 	return 0;
 }

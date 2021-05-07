@@ -1,7 +1,7 @@
 #include "BigInt_function.h"
 #include "BigInt_operator.h"
 
-BI abs(BI x)
+BI abs(BI x) // Passed
 {
 	if (isPositive(x))
 		return x;
@@ -9,28 +9,36 @@ BI abs(BI x)
 		return get2Complement(x);
 }
 
-BI get2Complement(BI x)
+BI get2Complement(BI x) // Passed
 {
 	BI temp = ~x;
 	char carry = 0;
 	int sum = 0;
-	for (int i = 0; i < temp.nBytes; i++) {
-		sum = (int)temp.data[i] + carry + 1;
+
+	sum = (int)temp.data[0] + (int)carry + 1;
+	if (sum >= 256) {
+		carry = sum / 256;
+		sum %= 256;
+	}
+	temp.data[0] = (BYTE)sum;
+
+	for (int i = 1; i < temp.nBytes; i++) {
+		sum = (int)temp.data[i] + (int)carry;
 		if (sum >= 256) {
-			sum -= 256;
-			carry = 1;
+			carry = sum / 256;
+			sum %= 256;
 		}
 		temp.data[i] = (BYTE)sum;
 	}
 	return temp;
 }
 
-bool isPositive(BI x)
+bool isPositive(BI x) // Passed
 {
-	return ~(x.data[x.nBytes - 1] >> 7);
+	return !(x.data[x.nBytes - 1] >> 7);
 }
 
-BI binaryToBigInt(char *str)
+BI binaryToBigInt(char *str) // Passed
 {
 	int cnt = 0;
 	int pos = 0;
@@ -41,10 +49,7 @@ BI binaryToBigInt(char *str)
 		temp.nBytes = 16;
 	}
 
-	temp.data = (BYTE*)malloc(temp.nBytes * sizeof(BYTE));
-
-	for (int i = 0; i < temp.nBytes; i++)
-		temp.data[i] = 0;
+	temp.data = (BYTE*)calloc(temp.nBytes, sizeof(BYTE));
 
 	for (int i = strlen(str) - 1; i >= 0; i--) {
 		if (cnt == 8) {
@@ -64,33 +69,33 @@ BI decimalToBigInt(char *str)
 
 char * bigIntToDecimal(BI x)
 {
+	
+	// A * 256 ^ 0 + B * 256 ^ 1 + C * 256 ^ 2 ... ^n -> Find way to multiply 2 decimal number
 	return nullptr;
 }
 
-char * bigIntToBinary(BI x)
+char * bigIntToBinary(BI x) // Passed
 {
 	char* str = nullptr;
 	int n = getLength(x);
-	str = (char*)malloc((x.nBytes + 1) * 8 * sizeof(char));
+	str = (char*)calloc(x.nBytes * 8 + 1, sizeof(char));
 	if (str == nullptr) return nullptr;
-	
-	for (int i = 0; i < x.nBytes * 8; i++)
-		str[i] = 0;
-	str[x.nBytes * 8] = '\0';
 
-	// Set first "digit"
-
-	//int f_len = n - 8 * (x.nBytes - 1);
 	int j = 0;
-	//for (int i = f_len - 1; i >= 0; i--) {
-	//	str[j] = (x.data[x.nBytes - 1] & (1 << i)) ? '1' : '0';
-	//	j++;
-	//}
+	// First part
+	int num = ceil(n / 8.f);
+	int bit_first = num * 8 - n;
+	bool have_bit_first = false;
 
-	// 00110010 -> f_len = 6,
-	// 00110010 & 00100000 <=> 00110010 & (1 << 5) <=> 1
 
-	for (int i = ceil(float(n)/8.f) - 1; i >= 0; i--) {
+	for (int k = bit_first - 1; k >= 0; k--) {
+		str[j] = (x.data[num - 1] & (1 << k)) ? '1' : '0';
+		j++;
+		have_bit_first = true;
+	}
+
+	// The rest
+	for (int i = num - 1 - have_bit_first; i >= 0; i--) {
 		for (int k = 7; k >= 0; k--) {
 			str[j] = (x.data[i] & (1 << k)) ? '1' : '0';
 			j++;
@@ -100,7 +105,7 @@ char * bigIntToBinary(BI x)
 	return str;
 }
 
-int getLength(BI x)
+int getLength(BI x) // Passed, return true length
 {
 	int len = 0;
 	int i = x.nBytes - 1;
@@ -116,4 +121,11 @@ int getLength(BI x)
 	len += i * 8;
 
 	return len;
+}
+
+bool initBI(int size, BI& x)
+{
+	x.nBytes = size;
+	x.data = (BYTE*)calloc(size, sizeof(BYTE));
+	return !(x.data == nullptr);
 }
