@@ -10,28 +10,7 @@ void assignOperator(BI src, BI& dest) {
 	memcpy(dest.data, src.data, src.nBytes);
 } // Already
 
-BI addOperator(BI term1, BI term2) { // should try again
-	int n;
-	if (term1.nBytes > term2.nBytes) {
-		n = term1.nBytes;
-	}
-	else {
-		n = term2.nBytes;
-	}
-	BYTE* tempData = (BYTE*)calloc(n + 1, sizeof(BYTE)); //should we check NULL pointer?...
-	int tempRes, carry = 0;
-	for (int i = 0; i < n; i++) {
-		tempRes = term1.data[i] + term2.data[i] + carry; // messy in getting value
-		tempData[i] = tempRes % 256;
-		carry = tempRes / 256;
-	}
-	if (carry != 0) {
-		tempData[n] = carry;
-		n++;
-	}
-	BI res = { n,tempData };
-	return res;
-}
+
 
 BI operator~(BI x)
 {
@@ -56,19 +35,51 @@ BI operator^(const BI &A, const BI &B)
 	return BI();
 }
 
+BI addOperator(const BI& A, const BI& B) {
+	BI res{ 0, nullptr };
+	int n;
+	if (A.nBytes >= B.nBytes) {
+		n = A.nBytes;
+	}
+	else {
+		n = B.nBytes;
+	}
+	BYTE* tempData = (BYTE*)calloc(n + 1, sizeof(BYTE));
+	int tempRes, carry = 0;
+	for (int i = 0; i < n; i++) {
+		tempRes = (int)getIthDigit(A, i) + (int)getIthDigit(B, i) + (int)carry;
+		tempData[i] = tempRes % 256;
+		carry = tempRes / 256;
+	}
+	if (carry != 0) {
+		tempData[n] = carry;
+		n++;
+	}
+	res = { n,tempData };
+	return res;
+}
+
 BI & operator+(const BI &A, const BI &B) // WIP
 {
-	BI res;
+	BI res{ 0, nullptr };
+	int n;
 
 	// initBI();
 
 	if (isPositive(A) && isPositive(B)) { // First case: 2 positive - possibility have more bytes
-
+		res = addOperator(A, B);
+		
 		return res;
 	}
 
 	if (!isPositive(A) && !isPositive(B)) { // 2 negative - possibility have more bytes
-
+		BI subA = get2Complement(A);
+		BI subB = get2Complement(B);
+		res = addOperator(subA, subB);
+		if (getLength(res) % 8 == 0) {
+			res.nBytes++;
+		}
+		res = get2Complement(res);
 		return res;
 	}
 

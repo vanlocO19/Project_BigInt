@@ -9,7 +9,7 @@ using namespace std;
 
 int main()
 {
-	char t[] {"100001110101"};
+	/*char t[] {"100001110101"};
 
 	BI temp = binaryToBigInt(t);
 
@@ -20,6 +20,16 @@ int main()
 	cout << x;
 
 
+	*/
+	char t[] {"11000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"};
+	char s[] {"10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"};
+	BI tempA = binaryToBigInt(t);
+	BI tempB = binaryToBigInt(s);
+	BI A2 = get2Complement(tempA);
+	BI B2 = get2Complement(tempB);
+	cout << bigIntToBinary(A2) << "\n";
+	cout << bigIntToBinary(B2);
+	
 	
 	return 0;
 }
