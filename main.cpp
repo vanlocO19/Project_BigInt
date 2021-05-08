@@ -11,6 +11,7 @@ int main()
 {
 	char t[]{ "11000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" };
 
+
 	/*BI temp = binaryToBigInt(t);
 
 	cout << getLength(temp) << endl;
@@ -29,6 +30,7 @@ int main()
 	char* y = bigIntToBinary(get2Complement(x));
 
 	cout << y;
+
 	
 	
 	return 0;

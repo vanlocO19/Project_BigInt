@@ -9,6 +9,15 @@ BI abs(BI x) // Passed
 		return get2Complement(x);
 }
 
+int getIthDigit(BI x, int i) {
+	if (i < x.nBytes) {
+		return x.data[i];
+	}
+	else {
+		return 0;
+	}
+}
+
 BI get2Complement(BI x) // Passed
 {
 	BI temp = ~x;
@@ -106,6 +115,8 @@ char * bigIntToBinary(BI x) // Passed
 
 	return str;
 }
+
+
 
 int getLength(BI x) // Passed, return true length
 {

@@ -5,7 +5,8 @@ BigInt & BigInt::operator=(const BigInt & other)
 	if (this == &other)
 		return *this;
 	if (nBytes != other.nBytes) {
-		free(data);
+		if(data != nullptr)
+			free(data);
 		data = nullptr;
 		nBytes = other.nBytes;
 		data = (BYTE*)malloc(nBytes * sizeof(BYTE));
