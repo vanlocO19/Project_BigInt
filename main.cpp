@@ -9,17 +9,27 @@ using namespace std;
 
 int main()
 {
-	char t[] {"100001110101"};
+	char t[]{ "11000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" };
 
-	BI temp = binaryToBigInt(t);
+	/*BI temp = binaryToBigInt(t);
 
 	cout << getLength(temp) << endl;
 
 	char *x = (bigIntToBinary(abs(get2Complement(temp))));
 	cout << strlen(x) << endl;
-	cout << x;
+	cout << x;*/
 
+	char a[]{ "152634" };
+	char b[]{ "12632" };
 
+	//cout << addDecimal(a, b) << endl;
+
+	//cout << multiplyDecimal(a, 4);
+	BI x = binaryToBigInt(t);
+	char* y = bigIntToBinary(get2Complement(x));
+
+	cout << y;
+	
 	
 	return 0;
 }
