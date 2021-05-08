@@ -53,10 +53,12 @@ BI binaryToBigInt(char *str) // Passed
 	int pos = 0;
 	BI temp;
 	if (strlen(str) > 128) {
-		temp.nBytes = (strlen(str) + 7 ) / 8.f;
+		temp.nBytes = ceil(strlen(str) / 8.f);
 	} else {
 		temp.nBytes = 16;
 	}
+
+	//temp.nBytes++;
 
 	temp.data = (BYTE*)calloc(temp.nBytes, sizeof(BYTE));
 
@@ -97,7 +99,7 @@ char * bigIntToBinary(BI x) // Passed
 	bool have_bit_first = false;
 
 
-	for (int k = bit_first - 1; k >= 0; k--) {
+	for (int k = 7 - bit_first; k >= 0; k--) {
 		str[j] = (x.data[num - 1] & (1 << k)) ? '1' : '0';
 		j++;
 		have_bit_first = true;
@@ -139,4 +141,80 @@ bool initBI(int size, BI& x)
 	x.nBytes = size;
 	x.data = (BYTE*)calloc(size, sizeof(BYTE));
 	return !(x.data == nullptr);
+}
+
+char * addDecimal(const char *A, const char *B)
+{
+	char* res = nullptr;
+	int len = 0;
+
+	if (strlen(A) > strlen(B))
+		len = strlen(A) + 1;
+	else
+		len = strlen(B) + 1;
+
+	res = (char*)calloc(len + 1, sizeof(char));
+	if (res == nullptr) return nullptr;
+
+	char sum = 0;
+	char carry = 0;
+
+	for (int i = 0; i < len; i++) {
+		if (i < strlen(A))
+			sum += A[i] - '0';
+		if (i < strlen(B))
+			sum += B[i] - '0';
+		sum += carry;
+		if (sum >= 10) {
+			carry = sum / 10;
+			sum = sum % 10;
+		}
+		res[i] = sum + '0';
+		sum = 0;
+	}
+	if (res[len - 1] == '0') {
+		res[len - 1] = '\0';
+		realloc(res, len);
+	}
+
+	return res;
+}
+
+char * multiplyDecimal(const char *A, int B)
+{
+	char* res = nullptr;
+	int len = strlen(A) + 1;
+
+	res = (char*)calloc(len + 1, sizeof(char));
+	if (res == nullptr) return nullptr;
+
+	int sum = 1;
+	char carry = 0;
+
+	for (int i = 0; i < len - 1; i++) {
+		sum *= A[i] - '0';
+		sum *= B;
+		sum += carry;
+		if (sum >= 10) {
+			carry = sum / 10;
+			sum = sum % 10;
+		}
+		res[i] = sum + '0';
+		sum = 1;
+	}
+
+	if (carry > 0)
+		res[len - 1] = carry + '0';
+
+	if (res[len - 1] == '0') {
+		res[len - 1] = '\0';
+		realloc(res, len);
+	}
+
+	return res;
+}
+
+char * multiplyDecimal(const char *A, const char *B)
+{
+	return nullptr;
 }
