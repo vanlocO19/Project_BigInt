@@ -35,7 +35,7 @@ BI operator^(const BI &A, const BI &B)
 	return BI();
 }
 
-BI addOperator(const BI& A, const BI& B) {
+BI addOperator(const BI& A, const BI& B, bool chk) {
 	BI res{ 0, nullptr };
 	int n;
 	if (A.nBytes >= B.nBytes) {
@@ -51,7 +51,7 @@ BI addOperator(const BI& A, const BI& B) {
 		tempData[i] = tempRes % 256;
 		carry = tempRes / 256;
 	}
-	if (carry != 0) {
+	if (carry != 0 && chk) {
 		tempData[n] = carry;
 		n++;
 	}
@@ -63,11 +63,12 @@ BI & operator+(const BI &A, const BI &B) // WIP
 {
 	BI res{ 0, nullptr };
 	int n;
+	bool chk = true;
 
 	// initBI();
 
 	if (isPositive(A) && isPositive(B)) { // First case: 2 positive - possibility have more bytes
-		res = addOperator(A, B);
+		res = addOperator(A, B, chk);
 		
 		return res;
 	}
@@ -75,7 +76,7 @@ BI & operator+(const BI &A, const BI &B) // WIP
 	if (!isPositive(A) && !isPositive(B)) { // 2 negative - possibility have more bytes
 		BI subA = get2Complement(A);
 		BI subB = get2Complement(B);
-		res = addOperator(subA, subB);
+		res = addOperator(subA, subB, chk);
 		if (getLength(res) % 8 == 0) {
 			res.nBytes++;
 		}
@@ -84,19 +85,50 @@ BI & operator+(const BI &A, const BI &B) // WIP
 	}
 
 	// 1 positive & 1 negative - impossible to have more bytes !
-	
+	chk = false;
+	res = addOperator(A, B, chk);
 	return res;
 }
 
 BI & operator-(const BI &A, const BI &B)
 {
-	BI res;
+	BI res = { 0, 0 };
+	BI B2 = get2Complement(B);
+	res = A + B2;
+	return res;
+}
+
+BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A is less than nBytes of B
+	BI res = { 0, 0 };
+	BYTE* tempData = NULL;
+	int nBytesA = A.nBytes;
+	int nBytesB = B.nBytes;
+	tempData = (BYTE*)calloc(nBytesB + nBytesA, sizeof(BYTE));
+	int tempRes = 0, carry = 0;
+	for (int i = 0; i < nBytesA; i++) {
+		for (int j = 0; j < i; j++) {
+			tempData[j] = 0;
+		}
+		for (int j = i; j < nBytesB + i; j++) {
+			tempRes = (int)A.data[i] * (int)B.data[j - i] + carry;
+			tempData[j] = tempRes % 256;
+			carry = tempRes / 256;
+		}
+		if (carry != 0) {
+			tempData[nBytesB + i] = carry;
+		}
+		BI temp = { nBytesA + nBytesB,tempData };
+		res = res + temp;
+	}
 	return res;
 }
 
 BI & operator*(const BI &A, const BI &B)
 {
-	BI res;
+
+	BI res = { 0,0 };
+	res = multiOperator(A, B);
+	
 	return res;
 }
 

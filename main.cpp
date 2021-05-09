@@ -9,8 +9,8 @@ using namespace std;
 
 int main()
 {
-	char t[]{ "11000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" };
-
+	char t[]{"100"};
+	char s[]{"1000"};
 
 	/*BI temp = binaryToBigInt(t);
 
@@ -20,18 +20,15 @@ int main()
 	cout << strlen(x) << endl;
 	cout << x;*/
 
-	char a[]{ "152634" };
-	char b[]{ "12632" };
+	
 
 	//cout << addDecimal(a, b) << endl;
 
 	//cout << multiplyDecimal(a, 4);
 	BI x = binaryToBigInt(t);
-	char* y = bigIntToBinary(get2Complement(x));
+	BI y = binaryToBigInt(s);
+	BI res = x * y;
+	cout << bigIntToBinary(res);
 
-	cout << y;
-
-	
-	
 	return 0;
 }
