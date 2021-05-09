@@ -62,7 +62,7 @@ BI addOperator(const BI& A, const BI& B, bool chk) {
 BI & operator+(const BI &A, const BI &B) // WIP
 {
 	BI res{ 0, nullptr };
-	int n;
+	//int n;
 	bool chk = true;
 
 	// initBI();
@@ -100,10 +100,12 @@ BI & operator-(const BI &A, const BI &B)
 
 BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A is less than nBytes of B
 	BI res = { 0, 0 };
+	initBI(16, res);
 	BYTE* tempData = NULL;
 	int nBytesA = A.nBytes;
 	int nBytesB = B.nBytes;
-	tempData = (BYTE*)calloc(nBytesB + nBytesA, sizeof(BYTE));
+	tempData = (BYTE*)calloc(nBytesB + nBytesA, sizeof(BYTE)); 
+
 	int tempRes = 0, carry = 0;
 	for (int i = 0; i < nBytesA; i++) {
 		for (int j = 0; j < i; j++) {
@@ -118,7 +120,8 @@ BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A
 			tempData[nBytesB + i] = carry;
 		}
 		BI temp = { nBytesA + nBytesB,tempData };
-		res = res + temp;
+		BI t = res + temp;
+		res = t; 
 	}
 	return res;
 }
