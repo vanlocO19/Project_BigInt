@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
+#include <string>
 #include "BigInt.h"
 #include "BigInt_core.h"
 #include "BigInt_function.h"
@@ -10,7 +11,7 @@ using namespace std;
 int main()
 {
 	char t[]{"11010"};
-	char s[]{"1011100"};
+	
 
 	/*BI temp = binaryToBigInt(t);
 
@@ -26,14 +27,14 @@ int main()
 
 	//cout << multiplyDecimal(a, 4);
 	//BI x = binaryToBigInt(t);
-	//BI y = binaryToBigInt(s);
+	
 	//BI res = x * y;
 	//cout << bigIntToBinary(res);
 
-	char a[]{ "5342" };
-	char b[]{ "1122" };
+	
+	BI y = decimalToBigInt("-123867735");
 
-	cout << multiplyDecimal(a, b);
+	cout << bigIntToDecimal(y);
 
 	return 0;
 }

@@ -1,7 +1,9 @@
 #include "BigInt_function.h"
 #include "BigInt_operator.h"
-
+#include <conio.h>
 #include <memory>
+#include <string>
+#include <algorithm>
 
 BI abs(BI x) // Passed
 {
@@ -9,6 +11,13 @@ BI abs(BI x) // Passed
 		return x;
 	else 
 		return get2Complement(x);
+}
+
+std::string removeLeadingZeros(std::string s) {
+	unsigned int i = 0;
+	while (i < s.length() && s[i] == '0') i++;
+	if (i == s.length()) return "0"; // Full 0
+	return s.substr(i, std::string::npos);
 }
 
 int getIthDigit(BI x, int i) {
@@ -75,16 +84,84 @@ BI binaryToBigInt(char *str) // Passed
 	return temp;
 }
 
-BI decimalToBigInt(char *str)
-{
-	return BI();
+
+
+
+void divide256(std::string s, std::string& quotient, int& remainder) {
+	quotient = "0";
+	remainder = 0;
+	if (s.length() == 0) {
+		return;
+	}
+	if (s.length() < 3) {
+		quotient = "0";
+		remainder = stoi(s);
+		return;
+	}
+	unsigned int i = 2;
+	string temp = s.substr(0, 2);
+
+	// 256 -> max 256 * 9 = 2304
+
+	int val = 0;
+	int div = 0;
+
+	while (i < s.length()) {
+		temp += s[i];
+		val = stoi(temp);
+		div = val / 256;
+		quotient += to_string(div);
+		remainder = val - div * 256;
+		temp = to_string(remainder);
+		if (temp == "0") temp = "";
+		i++;
+	}
+	quotient = removeLeadingZeros(quotient);
 }
 
-char * bigIntToDecimal(BI x)
+BI decimalToBigInt(std::string str)
 {
-	
-	// A * 256 ^ 0 + B * 256 ^ 1 + C * 256 ^ 2 ... ^n -> Find way to multiply 2 decimal number
-	return nullptr;
+	bool sign = false;
+	if (str[0] == '-') {
+		sign = true;
+		str = str.substr(1, std::string::npos);
+	}
+
+	int expected_len = log(str.length()) / log(256) + 1; // Number of bits
+	int nBytes = ceil(expected_len / 8.f);
+	BI res;
+	initBI(nBytes > 16 ? nBytes : 16, res);
+
+	string quotient = "";
+	int remainder = 0;
+	int i = 0;
+	while (str.length() > 0 && str != "0") {
+		divide256(str, quotient, remainder);
+		res.data[i] = remainder;
+		str = quotient;
+		i++;
+	}
+
+	if (sign)
+		res = get2Complement(res);
+
+	return res;
+}
+
+std::string bigIntToDecimal(BI x)
+{
+	std::string res = "0";
+	bool sign = !isPositive(x);
+	if (sign) {
+		x = get2Complement(x);
+	}
+	for (unsigned int i = 0; i < x.nBytes; i++) {
+		res = addDecimal(res, multiplyDecimal(std::to_string(x.data[i]), pow("256", i)));
+	}
+	res = removeLeadingZeros(res);
+	if (sign) return "-" + res;
+	else return res;
+
 }
 
 char * bigIntToBinary(BI x) // Passed
@@ -182,6 +259,33 @@ char * addDecimal(const char *A, const char *B) // backward
 	return res;
 }
 
+std::string addDecimal(std::string A, std::string B, bool rev) // Forward -> outForward
+{
+	if (A.length() < B.length())
+		return addDecimal(B, A, rev);
+	if (!rev)
+	{
+		std::reverse(A.begin(), A.end()); // Flip
+		std::reverse(B.begin(), B.end());
+	}
+
+	std::string res = "";
+
+	int tempRes = 0;
+	int carry = 0;
+
+	while (B.length() < A.length())
+		B.push_back('0');
+	for (unsigned int i = 0; i < A.length(); i++) {
+		tempRes = A[i] - '0' + B[i] - '0' + carry;
+		res.push_back(tempRes % 10 + '0');
+		carry = tempRes / 10;
+	}
+	if (carry) res.push_back(carry + '0');
+	if(!rev)
+		std::reverse(res.begin(), res.end()); // Flip
+	return res;
+}
 
 char * multiplyDecimal(const char *A, int B) // backward
 {
@@ -215,6 +319,54 @@ char * multiplyDecimal(const char *A, int B) // backward
 	}
 
 	return res;
+}
+
+std::string multiplyDecimal(std::string A, std::string B)
+{
+	if (A.length() < B.length())
+		return multiplyDecimal(B, A);
+
+	std::string temp = "";
+	std::string res = "";
+
+	int tempRes = 0;
+	int carry = 0;
+
+	std::reverse(A.begin(), A.end());
+	std::reverse(B.begin(), B.end());
+
+	for (unsigned int i = 0; i < B.length(); i++) {
+		for (unsigned int j = 0; j < i; j++) {
+			temp.push_back('0');
+		}
+		for (unsigned int j = i; j < A.length() + i; j++) {
+			tempRes = (A[j - i] - '0') * (B[i] - '0') + carry;
+			temp.push_back(tempRes % 10 + '0');
+			carry = tempRes / 10;
+		}
+		if (carry) temp.push_back(carry + '0');
+		res = addDecimal(res, temp, true);
+		temp.erase();
+		carry = 0;
+	}
+	std::reverse(res.begin(), res.end());
+	return res;
+}
+
+std::string pow(std::string s, int n)
+{
+	if (n == 0) {
+		return "1";
+	} 
+	if (n == 1) {
+		return s;
+	}
+	std::string temp = pow(s, n / 2);
+	if (n % 2 == 0) {
+		return multiplyDecimal(temp, temp);
+	} else {
+		return multiplyDecimal(temp, multiplyDecimal(temp, s));
+	}
 }
 
 
@@ -265,18 +417,8 @@ char * multiplyDecimal(const char *A, const char *B) // backward
 		
 		res = addDecimal(res, t);
 
-		//memcpy(res, x, strlen(x) * sizeof(char)); I QUIT!
-
-		//free(x); 
 	}
-
+	
 	return res;
 }
 
-char * divideDecimal(const char *A, const int n) 
-{
-
-
-
-	return nullptr;
-}
