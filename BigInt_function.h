@@ -1,6 +1,7 @@
 /*2's complement*/
 
 #include "BigInt_core.h"
+#include <memory>
 
 BI abs(BI);
 int getIthDigit(BI x, int i);
@@ -19,3 +20,6 @@ char* addDecimal(const char*, const char*);
 char* multiplyDecimal(const char*, int);
 
 char* multiplyDecimal(const char*, const char*);
+
+
+char* divideDecimal(const char*, const int);

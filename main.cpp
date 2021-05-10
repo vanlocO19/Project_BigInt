@@ -25,10 +25,15 @@ int main()
 	//cout << addDecimal(a, b) << endl;
 
 	//cout << multiplyDecimal(a, 4);
-	BI x = binaryToBigInt(t);
-	BI y = binaryToBigInt(s);
-	BI res = x * y;
-	cout << bigIntToBinary(res);
+	//BI x = binaryToBigInt(t);
+	//BI y = binaryToBigInt(s);
+	//BI res = x * y;
+	//cout << bigIntToBinary(res);
+
+	char a[]{ "5342" };
+	char b[]{ "1122" };
+
+	cout << multiplyDecimal(a, b);
 
 	return 0;
 }

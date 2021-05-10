@@ -1,6 +1,8 @@
 #include "BigInt_function.h"
 #include "BigInt_operator.h"
 
+#include <memory>
+
 BI abs(BI x) // Passed
 {
 	if (isPositive(x))
@@ -143,7 +145,7 @@ bool initBI(int size, BI& x)
 	return !(x.data == nullptr);
 }
 
-char * addDecimal(const char *A, const char *B)
+char * addDecimal(const char *A, const char *B) // backward
 {
 	char* res = nullptr;
 	int len = 0;
@@ -180,7 +182,8 @@ char * addDecimal(const char *A, const char *B)
 	return res;
 }
 
-char * multiplyDecimal(const char *A, int B)
+
+char * multiplyDecimal(const char *A, int B) // backward
 {
 	char* res = nullptr;
 	int len = strlen(A) + 1;
@@ -214,7 +217,66 @@ char * multiplyDecimal(const char *A, int B)
 	return res;
 }
 
-char * multiplyDecimal(const char *A, const char *B)
+
+
+char * multiplyDecimal(const char *A, const char *B) // backward
 {
+
+	if (strlen(A) < strlen(B))
+		return multiplyDecimal(B, A);
+
+	char* t = (char*)calloc(strlen(A) + strlen(B) + 1, sizeof(char));
+	char* res = (char*)calloc(strlen(A) + strlen(B) + 1, sizeof(char));
+	int len = 0;
+
+	/*
+		for (int i = 0; i < nBytesA; i++) {
+		for (int j = 0; j < i; j++) {
+			tempData[j] = 0;
+		}
+		for (int j = i; j < nBytesB + i; j++) {
+			tempRes = (int)A.data[i] * (int)B.data[j - i] + carry;
+			tempData[j] = tempRes % 256;
+			carry = tempRes / 256;
+		}
+		if (carry != 0) {
+			tempData[nBytesB + i] = carry;
+		}
+		BI temp = { nBytesA + nBytesB,tempData };
+		BI t = res + temp;
+		res = t;
+	}
+	*/
+
+	int tempRes = 0;
+	int carry = 0;
+
+	char* x = nullptr;
+
+	for (int i = 0; i < strlen(B); i++) {
+		for (int j = 0; j < i; j++)
+			t[j] = '0';
+		for (int j = i; j < strlen(A) + i; j++) {
+			tempRes = (A[j - i] - '0') * (B[i] - '0') + carry;
+			t[j] = tempRes % 10 + '0';
+			carry = tempRes / 10;
+		}
+		if (carry) t[strlen(A) + i] = carry + '0';
+		
+		res = addDecimal(res, t);
+
+		//memcpy(res, x, strlen(x) * sizeof(char)); I QUIT!
+
+		//free(x); 
+	}
+
+	return res;
+}
+
+char * divideDecimal(const char *A, const int n) 
+{
+
+
+
 	return nullptr;
 }

@@ -202,3 +202,34 @@ BI & operator%(const BI &A, const BI &B)
 	return res;
 }
 
+BI & operator>>(const BI &A, const int &n)
+{
+	BI res;
+
+	return res;
+}
+
+BI & operator<<(const BI &, const int &)
+{
+	// TODO: insert return statement here
+	BI res;
+
+	return res;
+}
+
+BI & operator>>(const BI &, const BI &)
+{
+	// TODO: insert return statement here
+	BI res;
+
+	return res;
+}
+
+BI & operator<<(const BI &, const BI &)
+{
+	// TODO: insert return statement here
+	BI res;
+
+	return res;
+}
+
