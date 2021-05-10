@@ -9,8 +9,8 @@ using namespace std;
 
 int main()
 {
-	char t[]{"100"};
-	char s[]{"1000"};
+	char t[]{"11010"};
+	char s[]{"1011100"};
 
 	/*BI temp = binaryToBigInt(t);
 

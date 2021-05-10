@@ -130,15 +130,70 @@ BI & operator*(const BI &A, const BI &B)
 {
 
 	BI res = { 0,0 };
-	res = multiOperator(A, B);
+	bool aPos = isPositive(A);
+	bool bPos = isPositive(B);
+	/*I've forgot the abs function... Let me minimalize it later.*/
+	if (A.nBytes < B.nBytes) {
+		if (aPos && bPos) {
+			res = multiOperator(A, B);
+		}
+		else if (!aPos && !bPos) {
+			BI a2 = get2Complement(A);
+			BI b2 = get2Complement(B);
+			res = multiOperator(a2, b2);
+		}
+		else {
+			BI sub = { 0,0 };
+			if (!aPos) {
+				sub = get2Complement(A);
+				res = multiOperator(sub, B);
+			}
+			else {
+				sub = get2Complement(B);
+				res = multiOperator(A, sub);
+			}
+			BI temp = get2Complement(res);
+			res = temp;
+		}
+	}
+	else {
+		if (aPos && bPos) {
+			res = multiOperator(B, A);
+		}
+		else if (!aPos && !bPos) {
+			BI a2 = get2Complement(A);
+			BI b2 = get2Complement(B);
+			res = multiOperator(b2, a2);
+		}
+		else {
+			BI sub = { 0,0 };
+			if (!aPos) {
+				sub = get2Complement(A);
+				res = multiOperator(B, sub);
+			}
+			else {
+				sub = get2Complement(B);
+				res = multiOperator(sub, A);
+			}
+			BI temp = get2Complement(res);
+			res = temp;
+		}
+	}
 	
 	return res;
 }
 
 BI & operator/(const BI &A, const BI &B)
 {
-	BI res;
-	return res;
+	if (getLength(B) == 0) {
+		printf("Hey bro what are you doing?");
+	}
+	else {
+		BI res = { 0,0 };
+		
+		return res;
+	}
+	
 }
 
 BI & operator%(const BI &A, const BI &B)
