@@ -13,6 +13,53 @@ BI abs(BI x) // Passed
 		return get2Complement(x);
 }
 
+void shiftRBytes(BI& s, int n)
+{
+	if (n >= s.nBytes) { // Shift all!
+		for (int i = 0; i < s.nBytes; i++)
+			s.data[i] = 0;
+		s.nBytes = 16;
+		realloc(s.data, s.nBytes * sizeof(char));
+		return;
+	}
+
+	int i = 0;
+
+	for (; i < s.nBytes - n; i++) {
+		s.data[i] = s.data[i + n];
+	}
+	normalizeSize(s);
+
+}
+
+void shiftLBytes(BI& s, int n) {
+	if (realloc(s.data, (s.nBytes + n) * sizeof(char)) == nullptr) {
+		return;
+	}
+	s.nBytes += n;
+	for (int i = s.nBytes - 1; i >= n; i--) {
+		s.data[i] = s.data[i - n];
+	}
+	for (int i = 0; i < n; i++) {
+		s.data[i] = 0;
+	}
+}
+
+void normalizeSize(BI& s) {
+	int i = 0;
+	for (i = s.nBytes - 1; i >= 0; i--) {
+		if (s.data[i] != 0)
+			break;
+	}
+	if (i < 16) {
+		s.nBytes = 16;
+		realloc(s.data, s.nBytes * sizeof(char));
+	} else {
+		s.nBytes = i + 1;
+		realloc(s.data, s.nBytes * sizeof(char));
+	}
+}
+
 std::string removeLeadingZeros(std::string s) {
 	unsigned int i = 0;
 	while (i < s.length() && s[i] == '0') i++;

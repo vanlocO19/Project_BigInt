@@ -204,32 +204,80 @@ BI & operator%(const BI &A, const BI &B)
 
 BI & operator>>(const BI &A, const int &n)
 {
-	BI res;
+	BI res = A;
+	bool sign = false;
+	if (!isPositive(A)) {
+		res = get2Complement(res);
+		sign = true;
+	}
+
+	//int len = getLength(A);
+	int byte_shift = n / 8;
+	int bit_shift = n % 8;
+	shiftRBytes(res, byte_shift);
+	if (bit_shift > 0) {
+
+		int carry = 0;
+		int temp = 0;
+		for (int i = res.nBytes - 1; i >= 0; i--) {
+			temp = res.data[i];
+			res.data[i] = (res.data[i] >> bit_shift) + carry;
+			carry = temp << (8 - bit_shift);
+			carry >>= (8 - bit_shift); // overflow trick
+		}
+
+	}
+
+	if (getLength(res) >= 128) {
+		if (getLength(res) % 8 != 0) {
+			normalizeSize(res);
+		}
+	}
+
+	if (sign) res = get2Complement(res);
 
 	return res;
 }
 
-BI & operator<<(const BI &, const int &)
+BI & operator<<(const BI &A, const int &n)
 {
-	// TODO: insert return statement here
-	BI res;
+	BI res = A;
+	bool sign = false;
+	if (!isPositive(A)) {
+		res = get2Complement(res);
+		sign = true;
+	}
+
+	//int len = getLength(A);
+	int byte_shift = n / 8;
+	int bit_shift = n % 8;
+	shiftLBytes(res, byte_shift);
+	if (bit_shift > 0) {
+
+		if (getLength(res) + bit_shift >= 128) {
+			res.nBytes++;
+			realloc(res.data, res.nBytes * sizeof(char));
+		}
+
+		int carry = 0;
+		int temp = 0;
+		for (int i = 0; i < res.nBytes; i++) {
+			temp = res.data[i];
+			res.data[i] = (res.data[i] << bit_shift) + carry;
+			carry = temp >> (8 - bit_shift);
+		}
+	}
+	
+	if (getLength(res) >= 128) {
+		if (getLength(res) % 8 != 0) {
+			normalizeSize(res);
+		}
+	}
+
+	if (sign) res = get2Complement(res);
 
 	return res;
 }
 
-BI & operator>>(const BI &, const BI &)
-{
-	// TODO: insert return statement here
-	BI res;
 
-	return res;
-}
-
-BI & operator<<(const BI &, const BI &)
-{
-	// TODO: insert return statement here
-	BI res;
-
-	return res;
-}
 

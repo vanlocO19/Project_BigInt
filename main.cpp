@@ -10,7 +10,7 @@ using namespace std;
 
 int main()
 {
-	char t[]{"11010"};
+	//char t[]{"11010"};
 	
 
 	/*BI temp = binaryToBigInt(t);
@@ -32,9 +32,13 @@ int main()
 	//cout << bigIntToBinary(res);
 
 	
-	BI y = decimalToBigInt("-123867735");
+	char t[]{ "10100101" };
 
-	cout << bigIntToDecimal(y);
+	BI y = binaryToBigInt(t);
+	
+	BI x = y << 2;
+
+	cout << bigIntToBinary(y) << endl;
 
 	return 0;
 }

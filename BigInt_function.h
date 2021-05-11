@@ -20,10 +20,10 @@ std::string addDecimal(std::string, std::string, bool rev = false);
 
 char* multiplyDecimal(const char*, int);
 std::string multiplyDecimal(std::string, std::string);
-
+void shiftRBytes(BI&, int);
+void shiftLBytes(BI&, int);
+void normalizeSize(BI& s);
 //char* multiplyDecimal(const char*, const char*);
 
-
-char* divideDecimal(const char*, const int);
 
 std::string pow(std::string, int);
