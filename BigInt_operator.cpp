@@ -204,8 +204,9 @@ BI & operator%(const BI &A, const BI &B)
 
 BI & operator>>(const BI &A, const int &n)
 {
-	BI res = A;
+	BI res = { 0, nullptr };
 	bool sign = false;
+	res = A;
 	if (!isPositive(A)) {
 		res = get2Complement(res);
 		sign = true;
@@ -241,8 +242,9 @@ BI & operator>>(const BI &A, const int &n)
 
 BI & operator<<(const BI &A, const int &n)
 {
-	BI res = A;
+	BI res = {0, nullptr};
 	bool sign = false;
+	res = A;
 	if (!isPositive(A)) {
 		res = get2Complement(res);
 		sign = true;
