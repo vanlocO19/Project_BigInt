@@ -94,7 +94,8 @@ BI & operator-(const BI &A, const BI &B)
 {
 	BI res = { 0, 0 };
 	BI B2 = get2Complement(B);
-	res = A + B2;
+	BI temp = A + B2;
+	res = temp;
 	return res;
 }
 
@@ -183,29 +184,11 @@ BI & operator*(const BI &A, const BI &B)
 	return res;
 }
 
-BI & operator/(const BI &A, const BI &B)
+BI& operator>>(const BI& A, const int& n)
 {
-	if (getLength(B) == 0) {
-		printf("Hey bro what are you doing?");
-	}
-	else {
-		BI res = { 0,0 };
-		
-		return res;
-	}
-	
-}
-
-BI & operator%(const BI &A, const BI &B)
-{
-	BI res;
-	return res;
-}
-
-BI & operator>>(const BI &A, const int &n)
-{
-	BI res = A;
+	BI res = { 0,nullptr };
 	bool sign = false;
+	res = A;
 	if (!isPositive(A)) {
 		res = get2Complement(res);
 		sign = true;
@@ -239,10 +222,11 @@ BI & operator>>(const BI &A, const int &n)
 	return res;
 }
 
-BI & operator<<(const BI &A, const int &n)
+BI& operator<<(const BI& A, const int& n)
 {
-	BI res = A;
+	BI res = { 0,nullptr };
 	bool sign = false;
+	res = A;
 	if (!isPositive(A)) {
 		res = get2Complement(res);
 		sign = true;
@@ -267,7 +251,7 @@ BI & operator<<(const BI &A, const int &n)
 			carry = temp >> (8 - bit_shift);
 		}
 	}
-	
+
 	if (getLength(res) >= 128) {
 		if (getLength(res) % 8 != 0) {
 			normalizeSize(res);
@@ -278,6 +262,58 @@ BI & operator<<(const BI &A, const int &n)
 
 	return res;
 }
+
+BI & operator/(const BI &A, const BI &B)
+{
+	BI res = { 0,0 };
+	if (getLength(B) == 0) {
+		printf("Hey bro what are you doing?");
+		return res;
+	}
+	else {
+		/*Cre: StackOverflow - Newton-Raphson division*/
+
+		BI dividend = A;
+		BI divisor = B;
+		int k = getLength(dividend) + getLength(divisor);
+		
+		char sub[]{"1"};
+		BI powOf2 = binaryToBigInt(sub);
+		BI temp = powOf2 << k + 1;
+		powOf2 = temp;
+		BI one = binaryToBigInt(sub);
+		BI x = dividend - divisor;
+		BI lastx = { 0,0 }, lastlastx = { 0,0 };
+		while (true) {
+			BI temp1 = x * (powOf2 - x * divisor);
+			BI temp2 = temp1 >> k;
+			x = temp2;
+			if (getLength(x - lastx) == 0 || getLength(x - lastlastx) == 0) {
+				break;
+			}
+			lastlastx = lastx;
+			lastx = x;
+			BI temp3 = dividend * x;
+			BI temp4 = temp3 >> k;
+			BI q = temp4;
+			if (isPositive(dividend - q * divisor - divisor) || getLength(dividend - q * divisor - divisor) == 0) {
+				BI temp5 = q + one;
+				q = temp5;
+			}
+			res = q;
+		}
+		return res;
+	}
+	
+}
+
+BI & operator%(const BI &A, const BI &B)
+{
+	BI res;
+	return res;
+}
+
+
 
 
 

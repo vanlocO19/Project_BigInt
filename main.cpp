@@ -32,13 +32,27 @@ int main()
 	//cout << bigIntToBinary(res);
 
 	
-	char t[]{ "10100101" };
+	/*char t[]{ "10100101" };
 
 	BI y = binaryToBigInt(t);
 	
-	BI x = y << 2;
+	BI x = y >> 4;
 
 	cout << bigIntToBinary(y) << endl;
+	cout << bigIntToBinary(x) << "\n";*/
 
+	/*char t[]{"1000000"};
+	char s[]{"100"};
+	BI t1 = binaryToBigInt(t);
+	BI s1 = binaryToBigInt(s);
+	BI res = t1 / s1;
+	cout << bigIntToBinary(res) << "\n";*/
+
+	char t[]{"10000000000000000000000000000000000000000"};
+	char s[]{"100100"};
+	BI t1 = binaryToBigInt(t);
+	BI s1 = binaryToBigInt(s);
+	BI res = t1 - s1;
+	cout << bigIntToBinary(res) << "\n";
 	return 0;
 }
