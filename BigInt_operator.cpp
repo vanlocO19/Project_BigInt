@@ -274,14 +274,18 @@ BI operator/(const BI &A, const BI &B)
 		
 		char sub[]{"1"};
 		BI powOf2 = binaryToBigInt(sub);
-		BI temp = powOf2 << k + 1;
+		BI temp = powOf2 << (k + 1);
 		powOf2 = temp;
 		BI one = binaryToBigInt(sub);
 		BI x = dividend - divisor;
 		BI lastx = { 0,0 }, lastlastx = { 0,0 };
+		initBI(16, lastx);
+		initBI(16, lastlastx);
 		while (true) {
-			BI temp1 = x * (powOf2 - x * divisor);
-			BI temp2 = temp1 >> k;
+			BI temp1 = x * divisor;
+			BI temp11 = powOf2 - temp1;
+			BI temp111 = x * temp11;
+			BI temp2 = temp111 >> k;
 			x = temp2;
 			if (getLength(x - lastx) == 0 || getLength(x - lastlastx) == 0) {
 				break;
@@ -297,6 +301,10 @@ BI operator/(const BI &A, const BI &B)
 				q = temp5;
 			}
 			res = q;
+		}
+		if (isPositive(res * B - A)) {
+			BI temp = res - one;
+			res = temp;
 		}
 		return res;
 	}

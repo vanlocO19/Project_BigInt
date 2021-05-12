@@ -48,7 +48,7 @@ int main()
 	BI res = t1 / s1;
 	cout << bigIntToBinary(res) << "\n";*/
 
-	char t[]{"10000000000000000000000000000000000000000"};
+	char t[]{"11110010111"};
 	char s[]{"100100"};
 	BI t1 = binaryToBigInt(t);
 	BI s1 = binaryToBigInt(s);
