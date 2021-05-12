@@ -52,7 +52,13 @@ int main()
 	char s[]{"100100"};
 	BI t1 = binaryToBigInt(t);
 	BI s1 = binaryToBigInt(s);
-	BI res = t1 - s1;
-	cout << bigIntToBinary(res) << "\n";
+
+	cout << bigIntToDecimal(t1) << "\n";
+	cout << bigIntToDecimal(s1) << "\n";
+
+	BI res = t1 / s1;
+	cout << bigIntToDecimal(t1) << "\n";
+	cout << bigIntToDecimal(s1) << "\n";
+	cout << bigIntToDecimal(res) << "\n";
 	return 0;
 }

@@ -78,7 +78,8 @@ int getIthDigit(BI x, int i) {
 
 BI get2Complement(BI x) // Passed
 {
-	BI temp = ~x;
+	BI temp = { 0,0 };
+	temp = ~x;
 	char carry = 0;
 	int sum = 0;
 

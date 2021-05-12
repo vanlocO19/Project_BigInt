@@ -3,18 +3,13 @@
 #include "BigInt_function.h"
 #include "BigInt.h"
 
-void assignOperator(BI src, BI& dest) {
-	freeBI(dest);
-	dest.nBytes = src.nBytes;
-	dest.data = (BYTE*)calloc(src.nBytes, sizeof(BYTE));
-	memcpy(dest.data, src.data, src.nBytes);
-} // Already
 
 
 
 BI operator~(BI x)
 {
-	BI temp = x;
+	BI temp = { 0, 0 };
+	temp = x;
 	for (int i = 0; i < temp.nBytes; i++)
 		temp.data[i] = ~temp.data[i];
 	return temp;
@@ -59,7 +54,7 @@ BI addOperator(const BI& A, const BI& B, bool chk) {
 	return res;
 }
 
-BI & operator+(const BI &A, const BI &B) // WIP
+BI operator+(const BI &A, const BI &B) // WIP
 {
 	BI res{ 0, nullptr };
 	//int n;
@@ -90,13 +85,11 @@ BI & operator+(const BI &A, const BI &B) // WIP
 	return res;
 }
 
-BI & operator-(const BI &A, const BI &B)
+BI operator-(const BI &A, const BI &B)
 {
-	BI res = { 0, 0 };
 	BI B2 = get2Complement(B);
 	BI temp = A + B2;
-	res = temp;
-	return res;
+	return temp;
 }
 
 BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A is less than nBytes of B
@@ -127,7 +120,7 @@ BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A
 	return res;
 }
 
-BI & operator*(const BI &A, const BI &B)
+BI operator*(const BI &A, const BI &B)
 {
 
 	BI res = { 0,0 };
@@ -184,7 +177,7 @@ BI & operator*(const BI &A, const BI &B)
 	return res;
 }
 
-BI& operator>>(const BI& A, const int& n)
+BI operator>>(const BI& A, const int& n)
 {
 	BI res = { 0,nullptr };
 	bool sign = false;
@@ -222,7 +215,7 @@ BI& operator>>(const BI& A, const int& n)
 	return res;
 }
 
-BI& operator<<(const BI& A, const int& n)
+BI operator<<(const BI& A, const int& n)
 {
 	BI res = { 0,nullptr };
 	bool sign = false;
@@ -263,7 +256,7 @@ BI& operator<<(const BI& A, const int& n)
 	return res;
 }
 
-BI & operator/(const BI &A, const BI &B)
+BI operator/(const BI &A, const BI &B)
 {
 	BI res = { 0,0 };
 	if (getLength(B) == 0) {
@@ -273,8 +266,10 @@ BI & operator/(const BI &A, const BI &B)
 	else {
 		/*Cre: StackOverflow - Newton-Raphson division*/
 
-		BI dividend = A;
-		BI divisor = B;
+		BI dividend = { 0,0 };
+		dividend = A;
+		BI divisor = { 0, 0 };
+		divisor = B;
 		int k = getLength(dividend) + getLength(divisor);
 		
 		char sub[]{"1"};
@@ -295,7 +290,8 @@ BI & operator/(const BI &A, const BI &B)
 			lastx = x;
 			BI temp3 = dividend * x;
 			BI temp4 = temp3 >> k;
-			BI q = temp4;
+			BI q = { 0, 0 };
+			q = temp4;
 			if (isPositive(dividend - q * divisor - divisor) || getLength(dividend - q * divisor - divisor) == 0) {
 				BI temp5 = q + one;
 				q = temp5;
@@ -307,9 +303,9 @@ BI & operator/(const BI &A, const BI &B)
 	
 }
 
-BI & operator%(const BI &A, const BI &B)
+BI operator%(const BI &A, const BI &B)
 {
-	BI res;
+	BI res = { 0,0 };
 	return res;
 }
 
