@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <time.h>
 #include "BigInt.h"
 #include "BigInt_core.h"
 #include "BigInt_function.h"
@@ -48,17 +49,23 @@ int main()
 	BI res = t1 / s1;
 	cout << bigIntToBinary(res) << "\n";*/
 
-	char t[]{"11110010111"};
-	char s[]{"100100"};
-	BI t1 = binaryToBigInt(t);
-	BI s1 = binaryToBigInt(s);
+	BI t1 = decimalToBigInt("21356");
+	BI s1 = decimalToBigInt("2389");
 
-	cout << bigIntToDecimal(t1) << "\n";
-	cout << bigIntToDecimal(s1) << "\n";
+	/*cout << bigIntToDecimal(t1) << "\n";
+	cout << bigIntToDecimal(s1) << "\n";*/
 
-	BI res = t1 / s1;
-	cout << bigIntToDecimal(t1) << "\n";
-	cout << bigIntToDecimal(s1) << "\n";
+	BI res = t1 * s1;
+	//cout << bigIntToDecimal(t1) << "\n";
+	//cout << bigIntToDecimal(s1) << "\n";
 	cout << bigIntToDecimal(res) << "\n";
+	res = res << 4;
+	cout << bigIntToDecimal(res) << "\n";
+	res = res >> 2;
+	cout << bigIntToDecimal(res) << "\n";
+	res = res / s1;
+	cout << bigIntToDecimal(res) << "\n";
+	
+	cerr << endl << "Tick: " << clock() << endl;
 	return 0;
 }

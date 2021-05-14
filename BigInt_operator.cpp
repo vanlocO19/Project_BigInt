@@ -3,35 +3,58 @@
 #include "BigInt_function.h"
 #include "BigInt.h"
 
-
-
-
 BI operator~(BI x)
 {
-	BI temp = { 0, 0 };
+	BI temp;
 	temp = x;
 	for (int i = 0; i < temp.nBytes; i++)
 		temp.data[i] = ~temp.data[i];
-	return temp;
+	return move(temp);
 }
-
 BI operator&(const BI &A, const BI &B)
 {
-	return BI();
-}
+	BI temp;
+	if (getLength(A) < getLength(B)) {
+		temp = A;
+	} else {
+		temp = B;
+	}
 
+	for (int i = 0; i < temp.nBytes; i++) {
+		temp.data[i] = A.data[i] & B.data[i];
+	}
+
+	return move(temp);
+}
 BI operator|(const BI &A, const BI &B)
 {
-	return BI();
+	BI temp;
+	if (getLength(A) > getLength(B)) {
+		temp = A;
+	} else {
+		temp = B;
+	}
+	for (int i = 0; i < temp.nBytes; i++) {
+		temp.data[i] = getIthDigit(A, i) | getIthDigit(B, i);
+	}
+	return move(temp);
 }
-
 BI operator^(const BI &A, const BI &B)
 {
-	return BI();
+	BI temp;
+	if (getLength(A) > getLength(B)) {
+		temp = A;
+	} else {
+		temp = B;
+	}
+	for (int i = 0; i < temp.nBytes; i++) {
+		temp.data[i] = getIthDigit(A, i) ^ getIthDigit(B, i);
+	}
+	return move(temp);
 }
 
 BI addOperator(const BI& A, const BI& B, bool chk) {
-	BI res{ 0, nullptr };
+	BI res;
 	int n;
 	if (A.nBytes >= B.nBytes) {
 		n = A.nBytes;
@@ -39,7 +62,11 @@ BI addOperator(const BI& A, const BI& B, bool chk) {
 	else {
 		n = B.nBytes;
 	}
-	BYTE* tempData = (BYTE*)calloc(n + 1, sizeof(BYTE));
+	res.cap = n + 8;
+	res.nBytes = n;
+	res.data = (BYTE*)calloc(res.cap, 1);
+
+	BYTE* tempData = res.data;
 	int tempRes, carry = 0;
 	for (int i = 0; i < n; i++) {
 		tempRes = (int)getIthDigit(A, i) + (int)getIthDigit(B, i) + (int)carry;
@@ -49,56 +76,23 @@ BI addOperator(const BI& A, const BI& B, bool chk) {
 	if (carry != 0 && chk) {
 		tempData[n] = carry;
 		n++;
+		res.nBytes++;
 	}
-	res = { n,tempData };
-	return res;
+	return move(res);
 }
-
-BI operator+(const BI &A, const BI &B) // WIP
-{
-	BI res{ 0, nullptr };
-	//int n;
-	bool chk = true;
-
-	// initBI();
-
-	if (isPositive(A) && isPositive(B)) { // First case: 2 positive - possibility have more bytes
-		res = addOperator(A, B, chk);
-		
-		return res;
-	}
-
-	if (!isPositive(A) && !isPositive(B)) { // 2 negative - possibility have more bytes
-		BI subA = get2Complement(A);
-		BI subB = get2Complement(B);
-		res = addOperator(subA, subB, chk);
-		if (getLength(res) % 8 == 0) {
-			res.nBytes++;
-		}
-		res = get2Complement(res);
-		return res;
-	}
-
-	// 1 positive & 1 negative - impossible to have more bytes !
-	chk = false;
-	res = addOperator(A, B, chk);
-	return res;
-}
-
-BI operator-(const BI &A, const BI &B)
-{
-	BI B2 = get2Complement(B);
-	BI temp = A + B2;
-	return temp;
-}
-
 BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A is less than nBytes of B
-	BI res = { 0, 0 };
-	initBI(16, res);
-	BYTE* tempData = NULL;
+	BI res;
+	BI temp;
+	//initBI(16, res);
+	BYTE* tempData = nullptr;
 	int nBytesA = A.nBytes;
 	int nBytesB = B.nBytes;
-	tempData = (BYTE*)calloc(nBytesB + nBytesA, sizeof(BYTE)); 
+
+	temp.cap = nBytesA + nBytesB;
+	temp.nBytes = nBytesA + nBytesB;
+	temp.data = (BYTE*)calloc(temp.nBytes, 1);
+
+	tempData = temp.data; 
 
 	int tempRes = 0, carry = 0;
 	for (int i = 0; i < nBytesA; i++) {
@@ -113,17 +107,48 @@ BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A
 		if (carry != 0) {
 			tempData[nBytesB + i] = carry;
 		}
-		BI temp = { nBytesA + nBytesB,tempData };
-		BI t = res + temp;
-		res = t; 
+		res = res + temp;
 	}
-	return res;
+	normalizeSize(res);
+	return move(res);
 }
 
+BI operator+(const BI &A, const BI &B) // WIP
+{
+	BI res;
+	bool chk = true;
+
+	if (isPositive(A) && isPositive(B)) { // First case: 2 positive - possibility have more bytes
+		res = addOperator(A, B, chk);
+		return move(res);
+	}
+
+	if (!isPositive(A) && !isPositive(B)) { // 2 negative - possibility have more bytes
+		BI subA = get2Complement(A);
+		BI subB = get2Complement(B);
+		res = addOperator(subA, subB, chk);
+		if (getLength(res) % 8 == 0) {
+			res.nBytes++;
+		}
+		res = get2Complement(res);
+		return move(res);
+	}
+
+	// 1 positive & 1 negative - impossible to have more bytes !
+	chk = false;
+	res = addOperator(A, B, chk);
+	normalizeSize(res);
+	return move(res);
+}
+BI operator-(const BI &A, const BI &B)
+{
+	BI B2 = get2Complement(B);
+	BI temp = A + B2;
+	return move(temp);
+}
 BI operator*(const BI &A, const BI &B)
 {
-
-	BI res = { 0,0 };
+	BI res;
 	bool aPos = isPositive(A);
 	bool bPos = isPositive(B);
 	/*I've forgot the abs function... Let me minimalize it later.*/
@@ -137,7 +162,7 @@ BI operator*(const BI &A, const BI &B)
 			res = multiOperator(a2, b2);
 		}
 		else {
-			BI sub = { 0,0 };
+			BI sub;
 			if (!aPos) {
 				sub = get2Complement(A);
 				res = multiOperator(sub, B);
@@ -160,7 +185,7 @@ BI operator*(const BI &A, const BI &B)
 			res = multiOperator(b2, a2);
 		}
 		else {
-			BI sub = { 0,0 };
+			BI sub;
 			if (!aPos) {
 				sub = get2Complement(A);
 				res = multiOperator(B, sub);
@@ -173,35 +198,90 @@ BI operator*(const BI &A, const BI &B)
 			res = temp;
 		}
 	}
+	return move(res);
+}
+BI operator/(const BI &A, const BI &B)
+{
+	BI res;
+	if (getLength(B) == 0) {
+		printf("Hey bro what are you doing?");
+		return res;
+	}
+	else {
+		/*Cre: StackOverflow - Newton-Raphson division*/
+
+		BI dividend;
+		dividend = A;
+		BI divisor;
+		divisor = B;
+		int k = getLength(dividend) + getLength(divisor);
+		
+		char sub[]{"1"};
+		BI powOf2 = binaryToBigInt(sub);
+		BI temp = powOf2 << (k + 1);
+		powOf2 = temp;
+		BI one = binaryToBigInt(sub);
+		BI x = dividend - divisor;
+		BI lastx, lastlastx;
+		initBI(16, lastx);
+		initBI(16, lastlastx);
+		while (true) {
+			BI temp1 = x * divisor;
+			BI temp11 = powOf2 - temp1;
+			BI temp111 = x * temp11;
+			BI temp2 = temp111 >> k;
+			x = temp2;
+			if (getLength(x - lastx) == 0 || getLength(x - lastlastx) == 0) {
+				break;
+			}
+			lastlastx = lastx;
+			lastx = x;
+			BI temp3 = dividend * x;
+			BI temp4 = temp3 >> k;
+			BI q;
+			q = temp4;
+			if (isPositive(dividend - q * divisor - divisor) || getLength(dividend - q * divisor - divisor) == 0) {
+				BI temp5 = q + one;
+				q = temp5;
+			}
+			res = q;
+		}
+		if (isPositive(res * B - A)) {
+			BI temp = res - one;
+			res = temp;
+		}
+		return move(res);
+	}
 	
-	return res;
+}
+BI operator%(const BI &A, const BI &B)
+{
+	BI res;
+	return move(res);
 }
 
 BI operator>>(const BI& A, const int& n)
 {
-	BI res = { 0,nullptr };
+	BI res(A);
 	bool sign = false;
-	res = A;
 	if (!isPositive(A)) {
 		res = get2Complement(res);
 		sign = true;
 	}
 
-	//int len = getLength(A);
 	int byte_shift = n / 8;
 	int bit_shift = n % 8;
 	shiftRBytes(res, byte_shift);
 	if (bit_shift > 0) {
 
-		int carry = 0;
-		int temp = 0;
+		BYTE carry = 0;
+		BYTE temp = 0;
 		for (int i = res.nBytes - 1; i >= 0; i--) {
 			temp = res.data[i];
 			res.data[i] = (res.data[i] >> bit_shift) + carry;
 			carry = temp << (8 - bit_shift);
-			carry >>= (8 - bit_shift); // overflow trick
+			//carry >>= (8 - bit_shift); // overflow trick
 		}
-
 	}
 
 	if (getLength(res) >= 128) {
@@ -212,20 +292,18 @@ BI operator>>(const BI& A, const int& n)
 
 	if (sign) res = get2Complement(res);
 
-	return res;
+	return move(res);
 }
-
 BI operator<<(const BI& A, const int& n)
 {
-	BI res = { 0,nullptr };
+	BI res(A);
+	
 	bool sign = false;
-	res = A;
 	if (!isPositive(A)) {
 		res = get2Complement(res);
 		sign = true;
 	}
-
-	//int len = getLength(A);
+	
 	int byte_shift = n / 8;
 	int bit_shift = n % 8;
 	shiftLBytes(res, byte_shift);
@@ -253,71 +331,6 @@ BI operator<<(const BI& A, const int& n)
 
 	if (sign) res = get2Complement(res);
 
-	return res;
+	return move(res);
 }
-
-BI operator/(const BI &A, const BI &B)
-{
-	BI res = { 0,0 };
-	if (getLength(B) == 0) {
-		printf("Hey bro what are you doing?");
-		return res;
-	}
-	else {
-		/*Cre: StackOverflow - Newton-Raphson division*/
-
-		BI dividend = { 0,0 };
-		dividend = A;
-		BI divisor = { 0, 0 };
-		divisor = B;
-		int k = getLength(dividend) + getLength(divisor);
-		
-		char sub[]{"1"};
-		BI powOf2 = binaryToBigInt(sub);
-		BI temp = powOf2 << (k + 1);
-		powOf2 = temp;
-		BI one = binaryToBigInt(sub);
-		BI x = dividend - divisor;
-		BI lastx = { 0,0 }, lastlastx = { 0,0 };
-		initBI(16, lastx);
-		initBI(16, lastlastx);
-		while (true) {
-			BI temp1 = x * divisor;
-			BI temp11 = powOf2 - temp1;
-			BI temp111 = x * temp11;
-			BI temp2 = temp111 >> k;
-			x = temp2;
-			if (getLength(x - lastx) == 0 || getLength(x - lastlastx) == 0) {
-				break;
-			}
-			lastlastx = lastx;
-			lastx = x;
-			BI temp3 = dividend * x;
-			BI temp4 = temp3 >> k;
-			BI q = { 0, 0 };
-			q = temp4;
-			if (isPositive(dividend - q * divisor - divisor) || getLength(dividend - q * divisor - divisor) == 0) {
-				BI temp5 = q + one;
-				q = temp5;
-			}
-			res = q;
-		}
-		if (isPositive(res * B - A)) {
-			BI temp = res - one;
-			res = temp;
-		}
-		return res;
-	}
-	
-}
-
-BI operator%(const BI &A, const BI &B)
-{
-	BI res = { 0,0 };
-	return res;
-}
-
-
-
-
 
