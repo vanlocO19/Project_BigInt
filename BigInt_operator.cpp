@@ -152,6 +152,7 @@ BI operator*(const BI &A, const BI &B)
 	bool aPos = isPositive(A);
 	bool bPos = isPositive(B);
 	/*I've forgot the abs function... Let me minimalize it later.*/
+	/*OKAY PLEASE MAKE THIS CODE CLEARLY LATER.*/
 	if (A.nBytes < B.nBytes) {
 		if (aPos && bPos) {
 			res = multiOperator(A, B);
@@ -226,34 +227,27 @@ BI operator/(const BI &A, const BI &B)
 		initBI(16, lastx);
 		initBI(16, lastlastx);
 		while (true) {
-			BI temp1 = x * divisor;
-			BI temp11 = powOf2 - temp1;
-			BI temp111 = x * temp11;
-			BI temp2 = temp111 >> k;
-			x = temp2;
+			BI temp1 = (x * (powOf2 - x * divisor)) >> k;
+			x = temp1;
 			if (getLength(x - lastx) == 0 || getLength(x - lastlastx) == 0) {
 				break;
 			}
 			lastlastx = lastx;
 			lastx = x;
-			BI temp3 = dividend * x;
-			BI temp4 = temp3 >> k;
-			BI q;
-			q = temp4;
-			if (isPositive(dividend - q * divisor - divisor) || getLength(dividend - q * divisor - divisor) == 0) {
-				BI temp5 = q + one;
-				q = temp5;
-			}
-			res = q;
+			
 		}
-		if (isPositive(res * B - A)) {
-			BI temp = res - one;
-			res = temp;
+		temp = (dividend * x) >> k;
+		BI q;
+		q = temp;
+		if (isPositive(dividend - q * divisor - divisor) || getLength(dividend - q * divisor - divisor) == 0) {
+			temp = q + one;
+			q = temp;
 		}
+		res = q;
 		return move(res);
 	}
-	
 }
+
 BI operator%(const BI &A, const BI &B)
 {
 	BI res;

@@ -42,23 +42,23 @@ int main()
 	cout << bigIntToBinary(y) << endl;
 	cout << bigIntToBinary(x) << "\n";*/
 
-	/*char t[]{"1000000"};
+	char t[]{"1000000"};
 	char s[]{"100"};
 	BI t1 = binaryToBigInt(t);
 	BI s1 = binaryToBigInt(s);
 	BI res = t1 / s1;
-	cout << bigIntToBinary(res) << "\n";*/
+	cout << bigIntToBinary(res) << "\n";
 
-	BI t1 = decimalToBigInt("21356");
-	BI s1 = decimalToBigInt("2389");
+	/*BI t1 = decimalToBigInt("21356");
+	BI s1 = decimalToBigInt("2389");*/
 
 	/*cout << bigIntToDecimal(t1) << "\n";
 	cout << bigIntToDecimal(s1) << "\n";*/
 
-	BI res = t1 * s1;
+	//BI res = t1 * s1;
 	//cout << bigIntToDecimal(t1) << "\n";
 	//cout << bigIntToDecimal(s1) << "\n";
-	cout << bigIntToDecimal(res) << "\n";
+	/*cout << bigIntToDecimal(res) << "\n";
 	res = res << 4;
 	cout << bigIntToDecimal(res) << "\n";
 	res = res >> 2;
@@ -67,5 +67,5 @@ int main()
 	cout << bigIntToDecimal(res) << "\n";
 	
 	cerr << endl << "Tick: " << clock() << endl;
-	return 0;
+	*/return 0;
 }
