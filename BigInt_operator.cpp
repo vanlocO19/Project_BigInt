@@ -3,6 +3,8 @@
 #include "BigInt_function.h"
 #include "BigInt.h"
 
+#include <iostream>
+#include <string>
 BI operator~(BI x)
 {
 	BI temp;
@@ -211,39 +213,31 @@ BI operator/(const BI &A, const BI &B)
 	else {
 		/*Cre: StackOverflow - Newton-Raphson division*/
 
-		BI dividend;
-		dividend = A;
-		BI divisor;
-		divisor = B;
-		int k = getLength(dividend) + getLength(divisor);
-		
-		char sub[]{"1"};
-		BI powOf2 = binaryToBigInt(sub);
-		BI temp = powOf2 << (k + 1);
-		powOf2 = temp;
-		BI one = binaryToBigInt(sub);
+		BI dividend(A);
+		BI divisor(B);
+
+		int k = getLength(A) + getLength(B);
 		BI x = dividend - divisor;
-		BI lastx, lastlastx;
+		BI lastx;
 		initBI(16, lastx);
-		initBI(16, lastlastx);
-		while (true) {
-			BI temp1 = (x * (powOf2 - x * divisor)) >> k;
-			x = temp1;
-			if (getLength(x - lastx) == 0 || getLength(x - lastlastx) == 0) {
-				break;
-			}
-			lastlastx = lastx;
+		BI one = decimalToBigInt("1");
+		BI pow2 = one << (k + 1);
+		//cout << bigIntToDecimal(pow2) << endl;
+
+		
+
+		while (getLength(x - lastx) > 0) {
 			lastx = x;
-			
+			x = (x * (pow2 - x * divisor)) >> k;
+			//cout << bigIntToDecimal(x) << endl;
 		}
-		temp = (dividend * x) >> k;
-		BI q;
-		q = temp;
-		if (isPositive(dividend - q * divisor - divisor) || getLength(dividend - q * divisor - divisor) == 0) {
-			temp = q + one;
-			q = temp;
+
+		if (!isPositive(x * divisor - pow2 >> 1)) {
+			x = x + decimalToBigInt("1");
 		}
-		res = q;
+
+		res = (dividend * x) >> k;
+
 		return move(res);
 	}
 }
@@ -317,11 +311,9 @@ BI operator<<(const BI& A, const int& n)
 		}
 	}
 
-	if (getLength(res) >= 128) {
-		if (getLength(res) % 8 != 0) {
-			normalizeSize(res);
-		}
-	}
+	normalizeSize(res);
+	if (getLength(res) % 8 == 0)
+		res.nBytes++;
 
 	if (sign) res = get2Complement(res);
 
