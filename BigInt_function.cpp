@@ -325,3 +325,77 @@ void normalizeSize(BI& s) {
 		s.nBytes = i + 1;
 	}
 }
+
+BI min(const BI& A, const BI& B) {
+	BI res;
+	BI difference = A - B;
+	if (isPositive(difference)) {
+		res = B;
+	}
+	else {
+		res = A;
+	}
+	return res;
+}
+
+BI max(const BI& A, const BI& B) {
+	BI res;
+	BI difference = A - B;
+	if (isPositive(difference)) {
+		res = A;
+	}
+	else {
+		res = B;
+	}
+	return res;
+}
+
+bool isEven(BI A) {
+	int last = A.data[0];
+	if (last % 2 == 0) {
+		return true;
+	}
+	return false;
+}
+
+BI pow(const BI& A, const BI& B) {
+	BI one = decimalToBigInt("1");
+	if (getLength(B - one) == 0) {
+		return A;
+	}
+	BI two = decimalToBigInt("2");
+	BI temp = pow(A, B / two);
+	if (isEven(B)) {
+		return temp * temp;
+	}
+	return temp * temp * A;
+}
+
+int digits(const BI& A) {
+	return getLength(A);
+}
+
+string to_string(const BI& A) {
+	string res;
+	return res;
+}
+
+string to_base32(const BI& A) {
+	string res;
+	return res;
+}
+
+string to_base58(const BI& A) {
+	string res;
+	return res;
+}
+
+string to_base64(const BI& A) {
+	string res;
+	return res;
+}
+
+bool is_prime(const BI& A) {
+	bool res = false;
+	return res;
+}

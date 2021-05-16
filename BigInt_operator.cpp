@@ -232,11 +232,21 @@ BI operator/(const BI &A, const BI &B)
 			//cout << bigIntToDecimal(x) << endl;
 		}
 
-		if (!isPositive(x * divisor - pow2 >> 1)) {
+		/*if (!isPositive(x * divisor - pow2 >> 1) || getLength(x  *divisor - pow2 >> 1) == 0) {
 			x = x + decimalToBigInt("1");
 		}
+		*/
 
-		res = (dividend * x) >> k;
+		BI quotient = (dividend * x) >> k;
+
+		BI temp = dividend - quotient * divisor - divisor;
+		if (isPositive(temp) || getLength(temp) == 0) {
+			quotient = quotient + decimalToBigInt("1");
+		}
+
+		res = quotient;
+
+		//res = (dividend * x) >> k;
 
 		return move(res);
 	}
@@ -244,7 +254,21 @@ BI operator/(const BI &A, const BI &B)
 
 BI operator%(const BI &A, const BI &B)
 {
-	BI res;
+	BI remainder = A;
+	BI divisor = B;
+	/*BI quotient = A / B;
+	BI remainder = A - B * quotient;
+	*/
+	
+	while (isPositive(remainder - divisor)) {
+		remainder = remainder - divisor;
+	}
+	
+	if (getLength(remainder - divisor) == 0) {
+		remainder = decimalToBigInt("0");
+	}
+
+	BI res = remainder;
 	return move(res);
 }
 

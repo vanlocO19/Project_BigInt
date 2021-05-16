@@ -25,3 +25,17 @@ void shiftLBytes(BI&, int);
 
 void normalizeSize(BI& s);
 
+BI min(const BI& A, const BI& B);
+BI max(const BI& A, const BI& B);
+bool isEven(BI A);
+BI pow(const BI& A, const BI& B);
+int digits(const BI& A);
+string to_string(const BI& A);
+string to_base32(const BI& A);
+string to_base58(const BI& A);
+string to_base64(const BI& A);
+bool is_prime(const BI& A);
+
+
+
+
