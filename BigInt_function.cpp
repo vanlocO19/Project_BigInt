@@ -381,17 +381,86 @@ string to_string(const BI& A) {
 }
 
 string to_base32(const BI& A) {
+	string str32 = "32";
+	BI thiryTwo = decimalToBigInt(str32);
+	int sign = !isPositive(A);
+	string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 	string res;
+	string subString;
+	int index;
+	BI subA = A;
+	while (getLength(subA) > 0) {
+		subString = bigIntToDecimal(subA % thiryTwo);
+		if (subString.length() == 1) {
+			index = subString[0] - '0';
+		}
+		else {
+			index = subString[1] - '0' + (subString[0] - '0') * 10;
+		}
+		res += alphabet[index];
+		subA = subA / thiryTwo;
+	}
+
+	std::reverse(res.begin(), res.end());
+	if (sign) {
+		return "-" + res;
+	}
 	return res;
 }
 
 string to_base58(const BI& A) {
+	string str58 = "58";
+	BI fiftyEight = decimalToBigInt(str58);
+	int sign = !isPositive(A);
+	string alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 	string res;
+	string subString;
+	int index;
+	BI subA = A;
+	while (getLength(subA) > 0) {
+		subString = bigIntToDecimal(subA % fiftyEight);
+		if (subString.length() == 1) {
+			index = subString[0] - '0';
+		}
+		else {
+			index = subString[1] - '0' + (subString[0] - '0') * 10;
+		}
+		res += alphabet[index];
+		subA = subA / fiftyEight;
+	}
+
+	std::reverse(res.begin(), res.end());
+	if (sign) {
+		return "-" + res;
+	}
 	return res;
 }
 
 string to_base64(const BI& A) {
+	string str64 = "64";
+	BI sixtyFour = decimalToBigInt(str64);
+	int sign = !isPositive(A);
+	string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	string res;
+	string subString;
+	int index;
+	BI subA = A;
+	while (getLength(subA) > 0) {
+		subString = bigIntToDecimal(subA % sixtyFour);
+		if (subString.length() == 1) {
+			index = subString[0] - '0';
+		}
+		else {
+			index = subString[1] - '0' + (subString[0] - '0') * 10;
+		}
+		res += alphabet[index];
+		subA = subA / sixtyFour;
+	}
+
+	std::reverse(res.begin(), res.end());
+	if (sign) {
+		return "-" + res;
+	}
 	return res;
 }
 

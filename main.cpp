@@ -72,16 +72,18 @@ int main()
 	
 	cerr << endl << "Tick: " << clock() << endl;
 	*/
-	char t[]{"110"};
-	char s[]{"10"};
+	/*char t[]{"110000"};
+	char s[]{"100"};
 	BI tBI = binaryToBigInt(t);
 	BI sBI = binaryToBigInt(s);
+	*/
 	/*BI res = tBI & sBI;
 	BI notT = ~tBI;
 	BI notS = ~sBI;*/
-	cout << bigIntToDecimal(tBI) << "\n";
+	/*cout << bigIntToDecimal(tBI) << "\n";
 	cout << bigIntToDecimal(sBI) << "\n";
-	cout << bigIntToDecimal(sBI / (decimalToBigInt("2"))) << "\n";
+	cout << bigIntToDecimal(sBI / (decimalToBigInt("2"))) << "\n";*/
+
 	/*BI multi = tBI / sBI;
 	cout << bigIntToDecimal(multi) << "\n";
 	BI tempProduct = sBI * multi;
@@ -97,7 +99,12 @@ int main()
 	//cout << bigIntToDecimal(multi) << "\n";
 	//cout << bigIntToBinary(multi) << "\n";
 	//cout << bigIntToDecimal(remain) << "\n";
-	BI power = pow(tBI, sBI);
-	cout << bigIntToDecimal(power);
+	/*BI power = pow(tBI, sBI);
+	cout << bigIntToDecimal(power);*/
+	char t[]{ "56" };
+	BI tBI = decimalToBigInt(t);
+	string s = to_base58(tBI);
+	cout << s << "\n";
+	
 	return 0;
 }
