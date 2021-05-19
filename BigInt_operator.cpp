@@ -85,17 +85,17 @@ BI addOperator(const BI& A, const BI& B, bool chk) {
 BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A is less than nBytes of B
 	BI res;
 	BI temp;
-	//initBI(16, res);
+	initBI(16, res);
 	BYTE* tempData = nullptr;
-	int nBytesA = A.nBytes;
-	int nBytesB = B.nBytes;
+	int nBytesA = ceil(getLength(A) / 8.f);
+	int nBytesB = ceil(getLength(B) / 8.f);
 
-	temp.cap = nBytesA + nBytesB;
-	temp.nBytes = nBytesA + nBytesB;
-	temp.data = (BYTE*)calloc(temp.nBytes, 1);
+	temp.nBytes = (nBytesA + nBytesB > 16 ? nBytesA + nBytesB : 16);
+	temp.cap = temp.nBytes + 8;
+	temp.data = (BYTE*)calloc(temp.cap, 1);
 
 	tempData = temp.data; 
-
+	
 	int tempRes = 0, carry = 0;
 	for (int i = 0; i < nBytesA; i++) {
 		for (int j = 0; j < i; j++) {
@@ -110,8 +110,9 @@ BI multiOperator(const BI& A, const BI& B) { //in this sub-function, nBytes of A
 			tempData[nBytesB + i] = carry;
 		}
 		res = res + temp;
+		//return move(res);
 	}
-	normalizeSize(res);
+	//normalizeSize(res);
 	return move(res);
 }
 
@@ -297,9 +298,9 @@ BI operator>>(const BI& A, const int& n)
 	}
 
 	if (getLength(res) >= 128) {
-		if (getLength(res) % 8 != 0) {
-			normalizeSize(res);
-		}
+		normalizeSize(res);
+		if (getLength(res) % 8 == 0)
+			res.nBytes++;
 	}
 
 	if (sign) res = get2Complement(res);
