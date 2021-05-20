@@ -14,7 +14,7 @@ using namespace std;
 int main()
 {
 	//char t[]{"11010"};
-	
+
 
 	/*BI temp = binaryToBigInt(t);
 
@@ -24,21 +24,21 @@ int main()
 	cout << strlen(x) << endl;
 	cout << x;*/
 
-	
+
 
 	//cout << addDecimal(a, b) << endl;
 
 	//cout << multiplyDecimal(a, 4);
 	//BI x = binaryToBigInt(t);
-	
+
 	//BI res = x * y;
 	//cout << bigIntToBinary(res);
 
-	
+
 	/*char t[]{ "10100101" };
 
 	BI y = binaryToBigInt(t);
-	
+
 	BI x = y >> 4;
 
 	cout << bigIntToBinary(y) << endl;
@@ -70,7 +70,7 @@ int main()
 	cout << bigIntToDecimal(res) << "\n";
 	res = res / s1;
 	cout << bigIntToDecimal(res) << "\n";
-	
+
 	cerr << endl << "Tick: " << clock() << endl;
 	*/
 	/*char t[]{"110000"};
@@ -129,10 +129,13 @@ int main()
 				token = strtok(NULL, delim);
 			}
 
+			BIProcess(n, parameter, fo);
+		}
 		fclose(fi);
 		fclose(fo);
 
 
-	
-	return 0;
+
+		return 0;
+	}
 }
