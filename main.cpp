@@ -7,6 +7,7 @@
 #include "BigInt_core.h"
 #include "BigInt_function.h"
 #include "BigInt_operator.h"
+#include "BigInt_Processing.h"
 
 using namespace std;
 
@@ -101,10 +102,37 @@ int main()
 	//cout << bigIntToDecimal(remain) << "\n";
 	/*BI power = pow(tBI, sBI);
 	cout << bigIntToDecimal(power);*/
-	char t[]{ "56" };
+	/*char t[]{ "56" };
 	BI tBI = decimalToBigInt(t);
 	string s = to_base58(tBI);
 	cout << s << "\n";
+	*/
+	FILE* fi = fopen("TestInput.txt", "r");
+	FILE* fo = fopen("TestOutput.txt", "w");
+	char str[1001];
+	while (fgets(str, 1000, fi)) {
+		char* parameter[5];
+		char delim[] = " ";
+		char* token;
+		if (!fi) {
+			printf("Cannot open file, bro!");
+		}
+		else
+		{
+			token = strtok(str, delim);
+			int n = 0;
+
+			while (token) {
+				parameter[n] = token;
+				n++;
+				fprintf(fo, "%s\n", token);
+				token = strtok(NULL, delim);
+			}
+
+		fclose(fi);
+		fclose(fo);
+
+
 	
 	return 0;
 }
