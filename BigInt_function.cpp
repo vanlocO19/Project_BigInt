@@ -416,7 +416,7 @@ string to_base58(const BI& A) {
 	string res;
 	string subString;
 	int index;
-	BI subA = A;
+	BI subA(A);
 	while (getLength(subA) > 0) {
 		subString = bigIntToDecimal(subA % fiftyEight);
 		if (subString.length() == 1) {
