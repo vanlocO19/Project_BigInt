@@ -218,7 +218,8 @@ BI operator/(const BI &A, const BI &B)
 		BI divisor(B);
 
 		int k = getLength(A) + getLength(B);
-		BI x = dividend - divisor;
+		//BI x = dividend - divisor;
+		BI x = decimalToBigInt("2");
 		BI lastx;
 		initBI(16, lastx);
 		BI one = decimalToBigInt("1");
@@ -230,7 +231,7 @@ BI operator/(const BI &A, const BI &B)
 		while (getLength(x - lastx) > 0) {
 			lastx = x;
 			x = (x * (pow2 - x * divisor)) >> k;
-			//cout << bigIntToDecimal(x) << endl;
+			cout << bigIntToDecimal(x) << endl;
 		}
 
 		/*if (!isPositive(x * divisor - pow2 >> 1) || getLength(x  *divisor - pow2 >> 1) == 0) {
@@ -255,8 +256,8 @@ BI operator/(const BI &A, const BI &B)
 
 BI operator%(const BI &A, const BI &B)
 {
-	BI remainder = A;
-	BI divisor = B;
+	BI remainder(A);
+	BI divisor(B);
 	/*BI quotient = A / B;
 	BI remainder = A - B * quotient;
 	*/
@@ -269,8 +270,7 @@ BI operator%(const BI &A, const BI &B)
 		remainder = decimalToBigInt("0");
 	}
 
-	BI res = remainder;
-	return move(res);
+	return move(remainder);
 }
 
 BI operator>>(const BI& A, const int& n)
